@@ -76,7 +76,7 @@ typedef struct groups {
 periodicsRoot_t *createPeriodicsList();
 
 // Cria um novo periodo
-periodicsNode_t *createPeriodic(researcherRoot_t *researchers, char *title, int year, char *classification);
+periodicsNode_t *createPeriodic(researcherRoot_t *researchers, char *title, int year, char *qualisLevel);
 
 // Cria uma lista de pesquisadores
 researcherRoot_t *createResearchersList();
@@ -88,7 +88,7 @@ researcherNode_t *createResearcher(researcherRoot_t *researchers, char *name);
 conferencesRoot_t * createConferencesList();
 
 // Cria uma nova conferencia
-conferenceNode_t *createConference(researcherRoot_t *researchers, char *conference, int year, char *classification);
+conferenceNode_t *createConference(researcherRoot_t *researchers, char *conference, int year, char *qualisLevel);
 
 // Cria uma nova lista de autores
 authorsRoot_t *createAuthorsList();
@@ -102,11 +102,11 @@ groups_t *createGroups();
 // Add a new group in groups
 void addGroup(groups_t *groups, researcherRoot_t *researchers, char *groupName);
 
-// Update the classification informations of an conference
-void updateEventClassification(researcherRoot_t *researchers, conferenceNode_t *conference, char *classification);
+// Update the qualisLevel informations of an conference
+void updateEventClassification(researcherRoot_t *researchers, conferenceNode_t *conference, char *qualisLevel);
 
-// Update the classification informations of a periodic
-void updatePeriodicClassification(researcherRoot_t *researchers, periodicsNode_t *periodic, char *classification);
+// Update the qualisLevel informations of a periodic
+void updatePeriodicClassification(researcherRoot_t *researchers, periodicsNode_t *periodic, char *qualisLevel);
 
 // Limpa toda memoria alocada
 void destroyAllStructs(researcherRoot_t *root, groups_t *groups);

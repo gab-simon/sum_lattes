@@ -16,7 +16,7 @@ void printByAuthor(researcherRoot_t *researchers);
 // Print quantity of periodics and events of the group by year 
 void printByYear(researcherRoot_t*researchers, int yearDelimiter);
 
-// Print all events and periodics with C classification
+// Print all events and periodics with C qualisLevel
 void printAllC(researcherRoot_t *researchers);
 
 // Print all events and periodics unclassified
@@ -30,10 +30,10 @@ void printCoauthors(researcherRoot_t *researchers);
 
 // ======================= GROUP PRINTING ======================= 
 
-// Print all periodics discriminated by classification of each group
+// Print all periodics discriminated by qualisLevel of each group
 void printPeriodicsByClassificationGroups(groups_t *groups);
 
-// Print all events discriminated by classification of each group
+// Print all events discriminated by qualisLevel of each group
 void printEventsByClassificationGroups(groups_t *groups);
 
 // Print the quantity of periodics and events of each researcher by group 
@@ -42,7 +42,7 @@ void printByAuthorGroups(groups_t *groups);
 // Print the quantity of periodics and events of each year by groups
 void printByYearGroups(groups_t *groups, int yearDelimiter);
 
-// Print all events and periodics with C classification
+// Print all events and periodics with C qualisLevel
 void printAllCGroups(groups_t *groups);
 
 // Print all events and periodics unclassified by group

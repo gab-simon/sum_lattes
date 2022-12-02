@@ -320,7 +320,7 @@ International Conference on Big Data Analytics and Knowledge Discovery B1
 IARIA International Conference on Advances in Databases, Knowledge, and Data Applications B4
 IFIP WG 11.3 Conference on Data and Applications Security and Privacy B1
 International Symposium on Distributed Computing and Artificial Intelligence B2
-Workshop on Detection and Classification of Acoustic Scenes and Events B4
+Workshop on Detection and qualisLevel of Acoustic Scenes and Events B4
 Data Compression Conference A3
 ACM Workshop on Distributed Cloud Computing B3
 International Workshop on Developments in Computational Models B4

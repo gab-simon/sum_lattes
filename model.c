@@ -28,7 +28,7 @@ conferencesRoot_t *createConferencesList()
 }
 
 // Create a new eventNode or add +1 in quantity variable if is already on the list
-conferenceNode_t *createConference(researcherRoot_t *researchers, char *conference, int year, char *classification)
+conferenceNode_t *createConference(researcherRoot_t *researchers, char *conference, int year, char *qualisLevel)
 {
     // Search for event existence
     conferenceNode_t *aux = researchers->allEvents->head;
@@ -59,7 +59,7 @@ conferenceNode_t *createConference(researcherRoot_t *researchers, char *conferen
     // Add the info and inicialize variables
     strcpy(newEvent->conference, conference);
     newEvent->year = year;
-    updateEventClassification(researchers, newEvent, classification);
+    updateEventClassification(researchers, newEvent, qualisLevel);
     if (researchers->allEvents->quantity == 0)
         researchers->allEvents->head = newEvent;
     else
@@ -93,7 +93,7 @@ periodicsRoot_t *createPeriodicsList()
     return periodics;
 }
 
-periodicsNode_t *createPeriodic(researcherRoot_t *researchers, char *title, int year, char *classification)
+periodicsNode_t *createPeriodic(researcherRoot_t *researchers, char *title, int year, char *qualisLevel)
 {
     // Search for periodic existence
     periodicsNode_t *aux = researchers->allPeriodics->head;
@@ -122,7 +122,7 @@ periodicsNode_t *createPeriodic(researcherRoot_t *researchers, char *title, int 
 
     // Add the info and inicialize variables
     strcpy(newPeriodic->title, title);
-    updatePeriodicClassification(researchers, newPeriodic, classification);
+    updatePeriodicClassification(researchers, newPeriodic, qualisLevel);
     newPeriodic->year = year;
     if (researchers->allPeriodics->quantity == 0)
         researchers->allPeriodics->head = newPeriodic;
@@ -286,11 +286,10 @@ void addGroup(groups_t *groups, researcherRoot_t *researchers, char *groupName)
     }
 }
 
-// Convert string classification into int classification
+// Convert string qualisLevel into int qualisLevel
 int getClassificationInt(char *string)
 {
-
-    if (strstr(string, "NC"))
+    if (strstr(string, "ND"))
         return 0;
     else if (strstr(string, "A1"))
         return 1;
@@ -312,38 +311,37 @@ int getClassificationInt(char *string)
         return 9;
 }
 
-// Update the classification informations of an conference
-void updateEventClassification(researcherRoot_t *researchers, conferenceNode_t *conference, char *classification)
+// Update the qualisLevel informations of an conference
+void updateEventClassification(researcherRoot_t *researchers, conferenceNode_t *conference, char *qualisLevel)
 {
-
     int classificationInt = 0;
     researcherNode_t *researcherAux = researchers->tail;
     // Get classificationName and update structures
-    conference->classificationName[0] = classification[0];
-    conference->classificationName[1] = classification[1];
+    conference->classificationName[0] = qualisLevel[0];
+    conference->classificationName[1] = qualisLevel[1];
     conference->classificationName[2] = '\0';
 
     // Get classificationInt and update structures
-    classificationInt = getClassificationInt(classification);
+    classificationInt = getClassificationInt(qualisLevel);
     conference->classificationInt = classificationInt;
     researchers->totalConfClassifications[classificationInt]++;
     researchers->allEvents->quantityClassifications[classificationInt]++;
     researcherAux->quantityConfClassifications[classificationInt]++;
 }
 
-// Update the classification informations of a periodic
-void updatePeriodicClassification(researcherRoot_t *researchers, periodicsNode_t *periodic, char *classification)
+// Update the qualisLevel informations of a periodic
+void updatePeriodicClassification(researcherRoot_t *researchers, periodicsNode_t *periodic, char *qualisLevel)
 {
 
     int classificationInt = 0;
     researcherNode_t *researcherAux = researchers->tail;
     // Get classificationName and update structures
-    periodic->classificationName[0] = classification[0];
-    periodic->classificationName[1] = classification[1];
+    periodic->classificationName[0] = qualisLevel[0];
+    periodic->classificationName[1] = qualisLevel[1];
     periodic->classificationName[2] = '\0';
 
     // Get classificationInt and update structures
-    classificationInt = getClassificationInt(classification);
+    classificationInt = getClassificationInt(qualisLevel);
     periodic->classificationInt = classificationInt;
     researchers->totalPerClassifications[classificationInt]++;
     researchers->allPeriodics->quantityClassifications[classificationInt]++;
