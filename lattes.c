@@ -11,7 +11,6 @@
 #include "chart.h"
 #define BUFFER 1024
 
-
 // Valor do conteudo da tag
 char *getContentXML(char *string, char content[BUFFER], FILE *curriculum)
 {
@@ -36,7 +35,7 @@ char *findConf(FILE *qualisConf, char *qualisLevel, char *confTitle)
     int distance;
     int minimalDistance = -1;
 
-    // Deixa a string em minuscula para comparação 
+    // Deixa a string em minuscula para comparação
     char lowerConf[BUFFER] = "";
     char lowerString[BUFFER] = "";
     convertLowerCase(confTitle, lowerConf);
@@ -47,16 +46,18 @@ char *findConf(FILE *qualisConf, char *qualisLevel, char *confTitle)
         fgets(string, BUFFER, qualisConf);
 
         // Deixa a classificação qualis em minuscula para comparação
-        convertLowerCase(string, lowerString); 
+        convertLowerCase(string, lowerString);
         distance = levenshteinDistance(lowerString, lowerConf);
 
-        // Copy into qualisLevel the string line with min distance
+        // Copia no qualisLevel a string de menor distancia
         if (((minimalDistance == -1) || distance < minimalDistance) && (distance - 9 < strlen(lowerConf) / 2.5))
         {
             strcpy(confTitle, string);
+
             qualisLevel[0] = confTitle[strlen(confTitle) - 3];
             qualisLevel[1] = confTitle[strlen(confTitle) - 2];
             qualisLevel[2] = '\0';
+
             confTitle[strlen(confTitle) - 3] = '\0';
 
             minimalDistance = distance;
@@ -77,7 +78,7 @@ char *findPeriodics(FILE *qualisPer, char *qualisLevel, char *periodicTitle)
     int distance;
     int minimalDistance = -1;
 
-    // Deixa a string em minuscula para comparação 
+    // Deixa a string em minuscula para comparação
     char lowerPeriodic[BUFFER] = "";
     char lowerString[BUFFER] = "";
     convertLowerCase(periodicTitle, lowerPeriodic);
@@ -88,16 +89,18 @@ char *findPeriodics(FILE *qualisPer, char *qualisLevel, char *periodicTitle)
         fgets(string, BUFFER, qualisPer);
 
         // Deixa a classificação qualis em minuscula para comparação
-        convertLowerCase(string, lowerString);                  
+        convertLowerCase(string, lowerString);
         distance = levenshteinDistance(lowerString, lowerPeriodic);
 
-        // Copy into qualisLevel the string line with min distance
+        // Copia no qualisLevel a string de menor distancia
         if (((minimalDistance == -1) || distance < minimalDistance) && (distance - 3 < strlen(lowerPeriodic) / 3))
         {
             strcpy(periodicTitle, string);
+
             qualisLevel[0] = periodicTitle[strlen(periodicTitle) - 3];
             qualisLevel[1] = periodicTitle[strlen(periodicTitle) - 2];
             qualisLevel[2] = '\0';
+
             periodicTitle[strlen(periodicTitle) - 3] = '\0';
 
             minimalDistance = distance;
@@ -138,7 +141,6 @@ int main(int argc, char **argv)
 {
     int option = 0;
     int flag_subdirectory = 0;
-    int limite_year = 0;
 
     char path_subdirectory[BUFFER] = "";
     char path_file[BUFFER] = "";
@@ -147,7 +149,7 @@ int main(int argc, char **argv)
     char path_qualisPer[BUFFER] = "";
     char path_qualisConf[BUFFER] = "";
 
-    while ((option = getopt(argc, argv, "d:c:p:y:s:")) != -1)
+    while ((option = getopt(argc, argv, "d:c:p:s:")) != -1)
         switch (option)
         {
         case 'd':
@@ -158,9 +160,6 @@ int main(int argc, char **argv)
             break;
         case 'p':
             strcpy(path_qualisPer, optarg);
-            break;
-        case 'y':
-            limite_year = atoi(optarg);
             break;
         case 's':
             flag_subdirectory = 1;
@@ -198,18 +197,18 @@ int main(int argc, char **argv)
 
     researcherRoot_t *researchers = NULL;
     researcherNode_t *researcherAux = NULL;
-    groups_t *groups = NULL;
+    clusters_t *clusters = NULL;
 
     if (flag_subdirectory)
     {
         getSubdirent(path_subdirectory, new_path, subdirectories);
-        groups = createGroups();
+        clusters = createClusters();
     }
 
-    // If subdiretory flag is actated, the program will get the information of two researchers
     for (int i = 0; i <= flag_subdirectory; i++)
     {
         researchers = createResearchersList();
+
         // Abre o diretorio ou um sub diretorio
         if (flag_subdirectory)
         {
@@ -217,7 +216,7 @@ int main(int argc, char **argv)
             printf("-------------------------GRUPO-------------------------%s\n", subdirectories[i]);
         }
         dirent = opendir(path_dirent);
-        
+
         // Leitura de arquivo xml
         for (;;)
         {
@@ -229,7 +228,7 @@ int main(int argc, char **argv)
 
             printf("Processsando arquivos ---> %s\n", dirFile->d_name);
 
-            // Get full path_file
+            // Salva caminho inteiro do arquivo
             path_file[0] = '\0';
             strcat(path_file, path_dirent);
             strcat(path_file, "/");
@@ -237,28 +236,29 @@ int main(int argc, char **argv)
 
             curriculum = fopen(path_file, "r");
 
-            // ==== Read curriculum and get name, events and periodics informations ====
+            // Le curriculo e processa os dados
             nameVerified = 0;
             name[0] = '\0';
             while (!feof(curriculum))
             {
                 fscanf(curriculum, "%s", string);
-                // --- Get researcher name ---
+                // Nome pesquisador
+
                 if (strstr(string, "DADOS-GERAIS") && !nameVerified)
                 {
-                    fscanf(curriculum, "%s", string); // get NOME-COMPLETO tag
+                    fscanf(curriculum, "%s", string);
                     getContentXML(string, name, curriculum);
                     researcherAux = createResearcher(researchers, name);
                     nameVerified = 1;
                 }
-                // --- Get events ---
+
+                // Nome conferencia
                 else if (strstr(string, "<TRABALHO-EM-EVENTOS"))
                 {
                     fscanf(curriculum, "%s", string);
-                    // Search for the next ocorrency of tag TRABALHO-EM-EVENTOS
+
                     while (!strstr(string, "<AUTORES"))
                     {
-                        // Search for de subtag ANO-DO-TRABALHO
                         if (strstr(string, "ANO-DO-TRABALHO=") || strstr(string, "ANO="))
                         {
                             getContentXML(string, year, curriculum);
@@ -267,12 +267,13 @@ int main(int argc, char **argv)
                             else if (atoi(year) > researchers->maximumYear || researchers->maximumYear == 0)
                                 researchers->maximumYear = atoi(year);
                         }
-                        // Search for the subtag NOME-DO-EVENTO and create a new event instance
                         else if (strstr(string, "NOME-DO-EVENTO=\""))
                         {
                             rewind(qualisConf);
+
                             getContentXML(string, confTitle, curriculum);
-                            findConf(qualisConf, qualisLevel, confTitle); // Search the event name and qualisLevel in qualisConf
+                            findConf(qualisConf, qualisLevel, confTitle);
+
                             createConference(researchers, confTitle, atoi(year), qualisLevel);
                             qualisLevel[0] = '\0';
                             confTitle[0] = '\0';
@@ -281,23 +282,25 @@ int main(int argc, char **argv)
                         fscanf(curriculum, "%s", string);
                     }
                 }
-                // --- Get coauthors ---
+
+                // Nome Co-autores
                 if (strstr(string, "NOME-COMPLETO-DO-AUTOR="))
                 {
                     getContentXML(string, coauthor, curriculum);
                     createAuthor(researcherAux, coauthor);
                     coauthor[0] = '\0';
                 }
-                // --- Get periodics ---
-                // Search for the next ocorrency of tag ANO-DO-ARTIGO
+
+                // Ano periodico
                 else if (strstr(string, "ANO-DO-ARTIGO="))
                     getContentXML(string, year, curriculum);
-                // Search for the next ocorrency of tag TÍTULO-DO-PERIODICO-OU-REVISTA and create a new periodic instance
+
+                // Nome periodico
                 else if (strstr(string, "TITULO-DO-PERIODICO-OU-REVISTA"))
                 {
                     rewind(qualisPer);
                     getContentXML(string, periodicTitle, curriculum);
-                    findPeriodics(qualisPer, qualisLevel, periodicTitle); // Search the periodic title and qualisLevel in qualisPer
+                    findPeriodics(qualisPer, qualisLevel, periodicTitle);
                     createPeriodic(researchers, periodicTitle, atoi(year), qualisLevel);
                     periodicTitle[0] = '\0';
                     year[0] = '\0';
@@ -305,44 +308,43 @@ int main(int argc, char **argv)
             }
         }
 
-        // Add the researchers in groups
+        // Adiciona os pesquisadores nos aglomerados
         if (flag_subdirectory)
         {
-            addGroup(groups, researchers, subdirectories[i]);
+            addCluster(clusters, researchers, subdirectories[i]);
             printf("\n");
         }
     }
 
-    // Subdirectories printing
     if (flag_subdirectory)
     {
-        printPeriodicsByClassificationGroups(groups);
+        printPeriodsByQualisClusters(clusters);
         printf("\n\n");
-        printEventsByClassificationGroups(groups);
+        printConfsByQualisClusters(clusters);
         printf("\n\n");
-        printByAuthorGroups(groups);
+        printByAuthorClusters(clusters);
         printf("\n\n");
-        printByYearGroups(groups, limite_year);
+        printByYearClusters(clusters, 2000);
         printf("\n\n");
-        printAllCGroups(groups);
+        printAllCClusters(clusters);
         printf("\n\n");
-        printUnclassifiedGroups(groups);
+        printUnqualisclusters(clusters);
     }
-    // Directory printing
+
     else
     {
         printf("\n\n");
         printPeriodicsByClassification(researchers);
         printf("\n\n");
-        printEventsByClassification(researchers);
+        printConfsByQualis(researchers);
         printf("\n\n");
         printByAuthor(researchers);
         printf("\n\n");
-        printByYear(researchers, limite_year);
+        printByYear(researchers, 2000);
         printf("\n\n");
         printAllC(researchers);
         printf("\n\n");
-        printUnclassified(researchers);
+        printUnqualis(researchers);
         printf("\n\n");
         printCoauthors(researchers);
         chart(researchers);
@@ -352,7 +354,7 @@ int main(int argc, char **argv)
     fclose(qualisConf);
     fclose(qualisPer);
     closedir(dirent);
-    destroyAllStructs(researchers, groups);
+    destroyAllStructs(researchers, clusters);
     exit(0);
     return 0;
 }

@@ -18,7 +18,7 @@ summarization.o: summarization.c
 	gcc -c summarization.c
 
 clean:
-	rm *.o *.temp
+	rm *.o *.out
 
 purge: clean
 	rm lattes

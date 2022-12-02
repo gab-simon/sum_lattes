@@ -11,7 +11,7 @@ void convertLowerCase(char *string, char *lower)
     int i;
     for (i = 0; i < strlen(string); i++)
         lower[i] = tolower(string[i]);
-    
+
     lower[i] = '\0';
 }
 

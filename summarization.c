@@ -3,53 +3,45 @@
 #include <string.h>
 #include "model.h"
 
-// ======================= INDIVIDUAL PRINTING =======================
-
-// Print all periodics of a researcher
+// Mostra todas os periodicos do pesquisador
 void printPeriodicsByClassification(researcherRoot_t *root)
 {
-
     int i;
     periodicsNode_t *aux = root->allPeriodics->head;
 
-    // Header
-    printf("=========================================================================\n");
-    printf("  PRODUÇÃO SUMARIZADA POR ORDEM DE PERIÓDICOS DISCRIMINANDO OS ESTRATOS\n");
-    printf("=========================================================================\n\n");
-    printf("+----------+--------+-----------------------------------------------------------------------------------+\n");
-    printf("| Classif. | Quant. | Nome do periódico                                                                 |\n");
-    printf("+----------+--------+-----------------------------------------------------------------------------------+\n");
+    printf("==============================================================================\n");
+    printf("  PRODUÇÃO SUMARIZADA POR ORDEM DE PERIÓDICOS DISCRIMINANDO OS ESTRATOS   \n");
+    printf("==============================================================================\n\n");
+    printf("+--------------+-------------+-----------------------------------------------------------------------------------+\n");
+    printf("| Classif.     | Quant.      | Nome do periódico                                                                 |\n");
+    printf("+--------------+-------------+-----------------------------------------------------------------------------------+\n");
 
-    // Content
     for (i = 1; i <= 9; i++)
     {
         while (aux)
         {
             if (aux->classificationInt == i)
-                printf("| %-8s | %-6d | %-81s |\n", aux->classificationName, aux->numPublications, aux->title);
+                printf("| %-10s | %-5d | %-81s |\n", aux->classificationName, aux->numPublications, aux->title);
             aux = aux->next;
         }
         aux = root->allPeriodics->head;
     }
-    printf("+----------+--------+-----------------------------------------------------------------------------------+\n");
+    printf("+--------------+-------------+-----------------------------------------------------------------------------------+\n");
 }
 
-// Print all events of a researcher
-void printEventsByClassification(researcherRoot_t *root)
+// Mostra todas as conferencias do pesquisador
+void printConfsByQualis(researcherRoot_t *root)
 {
-
     int i;
     conferenceNode_t *aux = root->allEvents->head;
 
-    // Header
-    printf("===========================================================================\n");
-    printf("  PRODUÇÃO SUMARIZADA POR ORDEM DE CONFERêNCIAS DISCRIMINANDO OS ESTRATOS\n");
-    printf("===========================================================================\n\n");
-    printf("+----------+--------+------------------------------------------------------------------------------------------------------------------------------------+\n");
-    printf("| Classif. | Quant. | Nome do evento                                                                                                                     |\n");
-    printf("+----------+--------+------------------------------------------------------------------------------------------------------------------------------------+\n");
+    printf("===============================================================================\n");
+    printf("  PRODUÇÃO SUMARIZADA POR ORDEM DE CONFERÊNCIAS DISCRIMINANDO OS ESTRATOS\n");
+    printf("===============================================================================\n\n");
+    printf("+--------------+------------+------------------------------------------------------------------------------------------------------------------------------------+\n");
+    printf("| Classif.     | Quant.     | Nome do evento                                                                                                                     |\n");
+    printf("+--------------+------------+------------------------------------------------------------------------------------------------------------------------------------+\n");
 
-    // Content
     for (i = 1; i <= 9; i++)
     {
         while (aux)
@@ -60,24 +52,21 @@ void printEventsByClassification(researcherRoot_t *root)
         }
         aux = root->allEvents->head;
     }
-    printf("+----------+--------+------------------------------------------------------------------------------------------------------------------------------------+\n");
+    printf("+--------------+------------+------------------------------------------------------------------------------------------------------------------------------------+\n");
 }
 
-// Comparison function for printByAuthor
 int nameComparison(const void *a, const void *b)
 {
-
     return strcmp((char *)a, (char *)b);
 }
 
-// Print quantity of periodics and events by author
+// Imprime a quantidade de periodicos e conferencias do pesquisador
 void printByAuthor(researcherRoot_t *researchers)
 {
-
     int i, j = 0;
     researcherNode_t *researcherAux = researchers->head;
     char classifications[10][3] = {"", "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C"};
-    // Create an array with names for sorting
+
     char names[researchers->quantity][100];
     for (i = 0; i < researchers->quantity; i++)
     {
@@ -86,16 +75,13 @@ void printByAuthor(researcherRoot_t *researchers)
     }
     qsort(names, researchers->quantity, 100, nameComparison);
 
-    // Header
-    printf("==========================================\n");
-    printf("  PRODUÇÃO SUMARIZADA POR PESQUISADOR\n");
-    printf("==========================================\n");
+    printf("==============================================\n");
+    printf("      PRODUÇÃO SUMARIZADA POR PESQUISADOR\n");
+    printf("==============================================\n");
 
-    // Content
     for (j = 0; j < researchers->quantity; j++)
     {
         researcherAux = researchers->head;
-        // Search for the next researcher in alpha order
         while (strcmp(researcherAux->name, names[j]))
             researcherAux = researcherAux->next;
         printf("\nPesquisador: %s\n", researcherAux->name);
@@ -103,36 +89,38 @@ void printByAuthor(researcherRoot_t *researchers)
         printf("| Classif. | Conferências | Periódicos |\n");
         printf("+----------+--------------+------------+\n");
         for (i = 1; i < 10; i++)
-            printf("| %-8s | %-12d | %-10d |\n", classifications[i], researcherAux->quantityConfClassifications[i], researcherAux->quantityPerClassifications[i]);
+            printf("| %-7s | %-12d | %-10d |\n", classifications[i], researcherAux->quantityConfClassifications[i], researcherAux->quantityPerClassifications[i]);
         printf("+----------+--------------+------------+\n");
     }
 }
 
-// Return the quantity of periodics from a given year
+// Pega a quantidade de periodicos do ano
 int getPeriodicsByYear(researcherRoot_t *researchers, int qualisLevel, int year)
 {
-
     researcherNode_t *researcherAux = researchers->head;
     periodicsNode_t *periodicAux;
+
     int count = 0;
     periodicAux = researchers->allPeriodics->head;
+
     while (periodicAux)
     {
         if (periodicAux->year == year && periodicAux->classificationInt == qualisLevel)
             count++;
         periodicAux = periodicAux->next;
     }
+
     researcherAux = researcherAux->next;
 
     return count;
 }
 
-// Return the quantity of events from a given year
-int getEventsByYear(researcherRoot_t *researchers, int qualisLevel, int year)
+// Pega a quantidade de conferencias do ano
+int getConfesByYear(researcherRoot_t *researchers, int qualisLevel, int year)
 {
-
     researcherNode_t *researcherAux = researchers->head;
     conferenceNode_t *eventAux;
+
     int count = 0;
     eventAux = researchers->allEvents->head;
     while (eventAux)
@@ -146,23 +134,22 @@ int getEventsByYear(researcherRoot_t *researchers, int qualisLevel, int year)
     return count;
 }
 
-// Print quantity of periodics and events of the group by year
+// Imprime a quantidadde de periodicos e conferencias de um algomerado por ano
 void printByYear(researcherRoot_t *researchers, int yearDelimiter)
 {
-
     int min = researchers->minimumYear;
     int max = researchers->maximumYear;
+
     if (yearDelimiter != 0)
         min = yearDelimiter;
+
     int i, j;
     char classifications[10][3] = {"ND", "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C"};
 
-    // Header
-    printf("========================================\n");
-    printf(" PRODUÇÃO SUMARIZADA DO GRUPO POR ANO\n");
-    printf("========================================\n\n");
+    printf("===========================================\n");
+    printf("         PRODUÇÃO SUMARIZADA DO GRUPO POR ANO\n");
+    printf("===========================================\n\n");
 
-    // Content
     for (i = max; i >= min; i--)
     {
         printf("Ano: %d\n", i);
@@ -171,20 +158,18 @@ void printByYear(researcherRoot_t *researchers, int yearDelimiter)
         printf("+----------+--------------+------------+\n");
         for (j = 1; j < 10; j++)
         {
-            printf("| %-8s | %-12d | %-10d |\n", classifications[j], getEventsByYear(researchers, j, i), getPeriodicsByYear(researchers, j, i));
+            printf("| %-8s | %-12d | %-10d |\n", classifications[j], getConfesByYear(researchers, j, i), getPeriodicsByYear(researchers, j, i));
         }
         printf("+----------+--------------+------------+\n\n");
     }
 }
 
-// Print all events and periodics with C qualisLevel
+// Imprime os qualis C encotrados
 void printAllC(researcherRoot_t *researchers)
 {
-
     periodicsNode_t *periodicAux = researchers->allPeriodics->head;
     conferenceNode_t *eventAux = researchers->allEvents->head;
 
-    // Header
     printf("=================================================\n");
     printf("  LISTAGEM DE PERIÓDICOS E CONFERÊNCIAS NÍVEL C\n");
     printf("=================================================\n\n");
@@ -193,7 +178,6 @@ void printAllC(researcherRoot_t *researchers)
     printf("|  Periódicos  |\n");
     printf("+--------------+\n");
 
-    // Content
     while (periodicAux)
     {
         if (periodicAux->classificationInt == 9)
@@ -201,12 +185,10 @@ void printAllC(researcherRoot_t *researchers)
         periodicAux = periodicAux->next;
     }
 
-    // Header
     printf("\n+--------------+\n");
     printf("| Conferências |\n");
     printf("+--------------+\n");
 
-    // Content - events
     while (eventAux)
     {
         if (eventAux->classificationInt == 9)
@@ -215,23 +197,20 @@ void printAllC(researcherRoot_t *researchers)
     }
 }
 
-// Print all events and periodics unclassified
-void printUnclassified(researcherRoot_t *researchers)
+// Imprime os ND/ nao classificados pela qualis
+void printUnqualis(researcherRoot_t *researchers)
 {
-
     periodicsNode_t *periodicAux = researchers->allPeriodics->head;
     conferenceNode_t *eventAux = researchers->allEvents->head;
 
-    // Header
-    printf("===========================================================\n");
-    printf("  LISTAGEM DE PERIÓDICOS E CONFERÊNCIAS NÃO CLASSIFICADOS  \n");
-    printf("===========================================================\n\n");
+    printf("=================================================================\n");
+    printf("      LISTAGEM DE PERIÓDICOS E CONFERÊNCIAS NÃO CLASSIFICADOS  \n");
+    printf("===================================================================\n\n");
 
     printf("+--------------+\n");
     printf("|  Periódicos  |\n");
     printf("+--------------+\n");
 
-    // Content - periodics
     while (periodicAux)
     {
         if (periodicAux->classificationInt == 0)
@@ -239,12 +218,10 @@ void printUnclassified(researcherRoot_t *researchers)
         periodicAux = periodicAux->next;
     }
 
-    // Header
     printf("\n+--------------+\n");
     printf("| Conferências |\n");
     printf("+--------------+\n");
 
-    // Content - events
     while (eventAux)
     {
         if (eventAux->classificationInt == 0)
@@ -253,19 +230,16 @@ void printUnclassified(researcherRoot_t *researchers)
     }
 }
 
-// Print all coauthors of each researcher
+// Imprime os co-autores
 void printCoauthors(researcherRoot_t *researchers)
 {
-
     researcherNode_t *researcherAux = researchers->head;
     authorNode_t *authorAux;
 
-    // Header
     printf("=========================\n");
     printf("  LISTAGEM DE COAUTORES  \n");
     printf("=========================\n");
 
-    // Content
     while (researcherAux)
     {
         printf("\nPESQUISADOR: %s\n", researcherAux->name);
@@ -277,28 +251,26 @@ void printCoauthors(researcherRoot_t *researchers)
         }
         researcherAux = researcherAux->next;
     }
+
     printf("---------------------------------------------\n");
 }
 
-// ======================= GROUP PRINTING =======================
-
-// Print all periodics discriminated by qualisLevel of each group
-void printPeriodicsByClassificationGroups(groups_t *groups)
+// Imprime todos os periodicos da qualis do aglomerado
+void printPeriodsByQualisClusters(clusters_t *clusters)
 {
-
     int i, j = 0;
-    researcherRoot_t *researchersAux = groups->group1;
+    researcherRoot_t *researchersAux = clusters->cluster1;
     periodicsNode_t *aux = researchersAux->allPeriodics->head;
-    char *groupName = groups->group1_name;
-    // Header
+
+    char *clusterName = clusters->cluster1_name;
+
     printf("=========================================================================\n");
     printf("  PRODUÇÃO SUMARIZADA POR ORDEM DE PERIÓDICOS DISCRIMINANDO OS ESTRATOS\n");
     printf("=========================================================================\n\n");
 
-    // Content
     for (j = 0; j < 2; j++)
     {
-        printf("\nGRUPO: %s\n", groupName);
+        printf("\nGRUPO: %s\n", clusterName);
         printf("+----------+--------+-----------------------------------------------------------------------------------+\n");
         printf("| Classif. | Quant. | Nome do periódico                                                                 |\n");
         printf("+----------+--------+-----------------------------------------------------------------------------------+\n");
@@ -312,30 +284,28 @@ void printPeriodicsByClassificationGroups(groups_t *groups)
             }
             aux = researchersAux->allPeriodics->head;
         }
-        groupName = groups->group2_name;
-        researchersAux = groups->group2;
+        clusterName = clusters->cluster2_name;
+        researchersAux = clusters->cluster2;
         aux = researchersAux->allPeriodics->head;
         printf("+----------+--------+-----------------------------------------------------------------------------------+\n");
     }
 }
 
-// Print all events discriminated by qualisLevel of each group
-void printEventsByClassificationGroups(groups_t *groups)
+// Imprime todos os conferencias da qualis do aglomerado
+void printConfsByQualisClusters(clusters_t *clusters)
 {
-
     int i, j = 0;
-    researcherRoot_t *researchersAux = groups->group1;
+    researcherRoot_t *researchersAux = clusters->cluster1;
     conferenceNode_t *aux = researchersAux->allEvents->head;
-    char *groupName = groups->group1_name;
-    // Header
-    printf("===========================================================================\n");
-    printf("  PRODUÇÃO SUMARIZADA POR ORDEM DE CONFERÊNCIAS DISCRIMINANDO OS ESTRATOS\n");
-    printf("===========================================================================\n");
+    char *clusterName = clusters->cluster1_name;
 
-    // Content
+    printf("===============================================================================\n");
+    printf("     PRODUÇÃO SUMARIZADA POR ORDEM DE CONFERÊNCIAS DISCRIMINANDO OS ESTRATOS\n");
+    printf("===============================================================================\n");
+
     for (j = 0; j < 2; j++)
     {
-        printf("\nGRUPO: %s\n", groupName);
+        printf("\nGRUPO: %s\n", clusterName);
         printf("+----------+--------+------------------------------------------------------------------------------------------------------+\n");
         printf("| Classif. | Quant. | Nome do periódico                                                                                    |\n");
         printf("+----------+--------+------------------------------------------------------------------------------------------------------+\n");
@@ -349,35 +319,35 @@ void printEventsByClassificationGroups(groups_t *groups)
             }
             aux = researchersAux->allEvents->head;
         }
-        groupName = groups->group2_name;
-        researchersAux = groups->group2;
+        clusterName = clusters->cluster2_name;
+        researchersAux = clusters->cluster2;
         aux = researchersAux->allEvents->head;
+
         printf("+----------+--------+------------------------------------------------------------------------------------------------------+\n");
     }
 }
 
-// Print the quantity of periodics and events of each researcher by group
-void printByAuthorGroups(groups_t *groups)
+// Imprime a quantidade periodicos e conferencias de cada pesquisador por aglomerado
+void printByAuthorClusters(clusters_t *clusters)
 {
-
     int i, j, k = 0;
-    researcherRoot_t *researchers = groups->group1;
+    researcherRoot_t *researchers = clusters->cluster1;
     researcherNode_t *researcherAux;
-    char *groupName = groups->group1_name;
-    char classifications[10][3] = {"", "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C"};
-    char names1[groups->group1->quantity][100];
-    char names2[groups->group2->quantity][100];
 
-    // Header
+    char *clusterName = clusters->cluster1_name;
+    char classifications[10][3] = {"", "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C"};
+
+    char names1[clusters->cluster1->quantity][100];
+    char names2[clusters->cluster2->quantity][100];
+
     printf("==========================================\n");
     printf("  PRODUÇÃO SUMARIZADA POR PESQUISADOR\n");
     printf("==========================================");
-    // Print the groups
+
     for (k = 0; k < 2; k++)
     {
         researcherAux = researchers->head;
-        printf("\n\n-------- GRUPO: %s --------\n", groupName);
-        // Create an array with names for sorting
+        printf("\n\n------------ GRUPO: %s ------------\n", clusterName);
         if (k == 0)
         {
             for (i = 0; i < researchers->quantity; i++)
@@ -385,8 +355,9 @@ void printByAuthorGroups(groups_t *groups)
                 strcpy(names1[i], researcherAux->name);
                 researcherAux = researcherAux->next;
             }
-            qsort(names1, researchers->quantity, 100, nameComparison);
+            qsort(names1, researchers->quantity, 150, nameComparison);
         }
+
         else
         {
             for (i = 0; i < researchers->quantity; i++)
@@ -394,13 +365,12 @@ void printByAuthorGroups(groups_t *groups)
                 strcpy(names2[i], researcherAux->name);
                 researcherAux = researcherAux->next;
             }
-            qsort(names2, researchers->quantity, 100, nameComparison);
+            qsort(names2, researchers->quantity, 150, nameComparison);
         }
-        // Content
+
         for (j = 0; j < researchers->quantity; j++)
         {
             researcherAux = researchers->head;
-            // Search for the next researcher in alpha order
             if (k == 0)
             {
                 while (strcmp(researcherAux->name, names1[j]))
@@ -411,7 +381,8 @@ void printByAuthorGroups(groups_t *groups)
                 while (strcmp(researcherAux->name, names2[j]))
                     researcherAux = researcherAux->next;
             }
-            printf("\nPesquisador: %s\n", researcherAux->name);
+            printf("\n ----------- Pesquisador: %s\n", researcherAux->name);
+
             printf("+----------+--------------+------------+\n");
             printf("| Classif. | Conferências | Periódicos |\n");
             printf("+----------+--------------+------------+\n");
@@ -419,66 +390,62 @@ void printByAuthorGroups(groups_t *groups)
                 printf("| %-8s | %-12d | %-10d |\n", classifications[i], researcherAux->quantityConfClassifications[i], researcherAux->quantityPerClassifications[i]);
             printf("+----------+--------------+------------+\n");
         }
-        researchers = groups->group2;
-        groupName = groups->group2_name;
+
+        researchers = clusters->cluster2;
+        clusterName = clusters->cluster2_name;
     }
 }
 
-// Print the quantity of periodics and events of each year by groups
-void printByYearGroups(groups_t *groups, int yearDelimiter)
+// Imprime a quantidade periodicos e conferencias de cada pesquisador por ano
+void printByYearClusters(clusters_t *clusters, int yearDelimiter)
 {
-
     int min = 0;
     int max = 0;
 
-    // Get maximumYear and minimumYear between the groups
-    if (groups->group1->maximumYear > groups->group2->maximumYear)
-        max = groups->group1->maximumYear;
+    if (clusters->cluster1->maximumYear > clusters->cluster2->maximumYear)
+        max = clusters->cluster1->maximumYear;
     else
-        max = groups->group2->maximumYear;
-    if (groups->group1->minimumYear < groups->group2->minimumYear)
-        min = groups->group1->maximumYear;
+        max = clusters->cluster2->maximumYear;
+    if (clusters->cluster1->minimumYear < clusters->cluster2->minimumYear)
+        min = clusters->cluster1->maximumYear;
     else
-        min = groups->group2->maximumYear;
+        min = clusters->cluster2->maximumYear;
 
     if (yearDelimiter != 0)
         min = yearDelimiter;
     int i, j;
     char classifications[10][3] = {"ND", "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C"};
 
-    // Header
-    printf("========================================\n");
-    printf(" PRODUÇÃO SUMARIZADA DO GRUPO POR ANO\n");
-    printf("========================================\n\n");
+    printf("============================================\n");
+    printf("    PRODUÇÃO SUMARIZADA DO GRUPO POR ANO\n");
+    printf("============================================\n\n");
 
-    // Content
     for (i = max; i >= min; i--)
     {
         printf("Ano: %d\n", i);
-        printf("%-44s%s\n", groups->group1_name, groups->group2_name);
+        printf("%-44s%s\n", clusters->cluster1_name, clusters->cluster2_name);
         printf("+----------+--------------+------------+    +----------+--------------+------------+\n");
         printf("| Classif. | Conferências | Periódicos |    | Classif. | Conferências | Periódicos |\n");
         printf("+----------+--------------+------------+    +----------+--------------+------------+\n");
         for (j = 1; j < 10; j++)
         {
-            printf("| %-8s | %-12d | %-10d |    ", classifications[j], getEventsByYear(groups->group1, j, i), getPeriodicsByYear(groups->group1, j, i));
-            printf("| %-8s | %-12d | %-10d |\n", classifications[j], getEventsByYear(groups->group2, j, i), getPeriodicsByYear(groups->group2, j, i));
+            printf("| %-8s | %-12d | %-10d |    ", classifications[j], getConfesByYear(clusters->cluster1, j, i), getPeriodicsByYear(clusters->cluster1, j, i));
+            printf("| %-8s | %-12d | %-10d |\n", classifications[j], getConfesByYear(clusters->cluster2, j, i), getPeriodicsByYear(clusters->cluster2, j, i));
         }
         printf("+----------+--------------+------------+    +----------+--------------+------------+\n\n");
     }
 }
 
-// Print all events and periodics with C qualisLevel
-void printAllCGroups(groups_t *groups)
+// Imprime todos os qualis C do aglomerado
+void printAllCClusters(clusters_t *clusters)
 {
-
-    researcherRoot_t *researchersAux = groups->group1;
+    researcherRoot_t *researchersAux = clusters->cluster1;
     periodicsNode_t *periodicAux = researchersAux->allPeriodics->head;
     conferenceNode_t *eventAux = researchersAux->allEvents->head;
-    char *groupName = groups->group1_name;
+
+    char *clusterName = clusters->cluster1_name;
     int i = 0;
 
-    // Header
     printf("=================================================\n");
     printf("  LISTAGEM DE PERIÓDICOS E CONFERÊNCIAS NÍVEL C\n");
     printf("=================================================\n\n");
@@ -487,56 +454,53 @@ void printAllCGroups(groups_t *groups)
     printf("|  Periódicos  |\n");
     printf("+--------------+\n");
 
-    // Content - periodics
     for (i = 0; i < 2; i++)
     {
-        printf("GRUPO: %s\n", groupName);
+        printf("-------------- GRUPO: %s --------------\n", clusterName);
         while (periodicAux)
         {
             if (periodicAux->classificationInt == 9)
                 printf("- %s\n", periodicAux->title);
             periodicAux = periodicAux->next;
         }
-        researchersAux = groups->group2;
+        researchersAux = clusters->cluster2;
         periodicAux = researchersAux->allPeriodics->head;
-        groupName = groups->group2_name;
+        clusterName = clusters->cluster2_name;
+
         printf("\n");
     }
-    groupName = groups->group1_name;
+    clusterName = clusters->cluster1_name;
 
-    // Header
     printf("\n+--------------+\n");
     printf("| Conferências |\n");
     printf("+--------------+\n");
 
-    // Content - events
     for (i = 0; i < 2; i++)
     {
-        printf("GRUPO: %s\n", groupName);
+        printf("-------------- GRUPO: %s --------------\n", clusterName);
         while (eventAux)
         {
             if (eventAux->classificationInt == 9)
                 printf("- %s\n", eventAux->conference);
             eventAux = eventAux->next;
         }
-        researchersAux = groups->group2;
+        researchersAux = clusters->cluster2;
         eventAux = researchersAux->allEvents->head;
-        groupName = groups->group2_name;
+        clusterName = clusters->cluster2_name;
+
         printf("\n");
     }
 }
 
-// Print all events and periodics unclassified by group
-void printUnclassifiedGroups(groups_t *groups)
+// Imprime os ND/ nao classificados pela qualis do aglomerado
+void printUnqualisclusters(clusters_t *clusters)
 {
-
-    researcherRoot_t *researchersAux = groups->group1;
+    researcherRoot_t *researchersAux = clusters->cluster1;
     periodicsNode_t *periodicAux = researchersAux->allPeriodics->head;
     conferenceNode_t *eventAux = researchersAux->allEvents->head;
-    char *groupName = groups->group1_name;
+    char *clusterName = clusters->cluster1_name;
     int i = 0;
 
-    // Header
     printf("===========================================================\n");
     printf("  LISTAGEM DE PERIÓDICOS E CONFERÊNCIAS NÃO CLASSIFICADOS\n");
     printf("===========================================================\n\n");
@@ -545,64 +509,59 @@ void printUnclassifiedGroups(groups_t *groups)
     printf("|  Periódicos  |\n");
     printf("+--------------+\n");
 
-    // Content - periodics
     for (i = 0; i < 2; i++)
     {
-        printf("GRUPO: %s\n", groupName);
+        printf("GRUPO: %s\n", clusterName);
         while (periodicAux)
         {
             if (periodicAux->classificationInt == 0)
                 printf("- %s\n", periodicAux->title);
             periodicAux = periodicAux->next;
         }
-        researchersAux = groups->group2;
+        researchersAux = clusters->cluster2;
         periodicAux = researchersAux->allPeriodics->head;
-        groupName = groups->group2_name;
+        clusterName = clusters->cluster2_name;
         printf("\n");
     }
-    groupName = groups->group1_name;
+    clusterName = clusters->cluster1_name;
 
-    // Header
     printf("\n+--------------+\n");
     printf("| Conferências |\n");
     printf("+--------------+\n");
 
-    // Content - events
     for (i = 0; i < 2; i++)
     {
-        printf("GRUPO: %s\n", groupName);
+        printf("GRUPO: %s\n", clusterName);
         while (eventAux)
         {
             if (eventAux->classificationInt == 0)
                 printf("- %s\n", eventAux->conference);
             eventAux = eventAux->next;
         }
-        researchersAux = groups->group2;
+        researchersAux = clusters->cluster2;
         eventAux = researchersAux->allEvents->head;
-        groupName = groups->group2_name;
+        clusterName = clusters->cluster2_name;
+
         printf("\n");
     }
 }
 
-// Print all coauthors of each researcher by group
-void printCoauthorsGroup(groups_t *groups)
+// Imprime os co-autores do aglomeros
+void printCoauthorsCluster(clusters_t *clusters)
 {
-
-    researcherRoot_t *researchersAux = groups->group1;
+    researcherRoot_t *researchersAux = clusters->cluster1;
     researcherNode_t *researcherAux = researchersAux->head;
     authorNode_t *authorAux;
-    char *groupName = groups->group1_name;
+    char *clusterName = clusters->cluster1_name;
     int i = 0;
 
-    // Header
     printf("=========================\n");
     printf("  LISTAGEM DE COAUTORES  \n");
     printf("=========================\n");
 
-    // Content
     for (i = 0; i < 2; i++)
     {
-        printf("\n-------- GRUPO: %s --------\n", groupName);
+        printf("\n-------- GRUPO: %s --------\n", clusterName);
         while (researcherAux)
         {
             printf("\nPESQUISADOR: %s\n", researcherAux->name);
@@ -614,9 +573,10 @@ void printCoauthorsGroup(groups_t *groups)
             }
             researcherAux = researcherAux->next;
         }
-        researchersAux = groups->group2;
+        researchersAux = clusters->cluster2;
         researcherAux = researchersAux->head;
-        groupName = groups->group2_name;
+        clusterName = clusters->cluster2_name;
+
         printf("---------------------------------------------\n\n");
     }
 }

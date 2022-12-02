@@ -2,53 +2,46 @@
 #ifndef SUMMARIZATION_H
 #define SUMMARIZATION_H
 
-// ======================= INDIVIDUAL PRINTING ======================= 
-
-// Print all periodics of a researcher
+// Imprime todas os periodicos do pesquisador
 void printPeriodicsByClassification(researcherRoot_t *root);
 
-// Print all events of a researcher
-void printEventsByClassification(researcherRoot_t *root);
+// Imprime todas as conferencias do pesquisador
+void printConfsByQualis(researcherRoot_t *root);
 
-// Print quantity of periodics and events by author
+// Imprime a quantidade de periodicos e conferencias do pesquisador
 void printByAuthor(researcherRoot_t *researchers);
 
-// Print quantity of periodics and events of the group by year 
-void printByYear(researcherRoot_t*researchers, int yearDelimiter);
+// Imprime a quantidadde de periodicos e conferencias de um algomerado por ano
+void printByYear(researcherRoot_t *researchers, int yearDelimiter);
 
-// Print all events and periodics with C qualisLevel
+// Imprime os qualis C encotrados
 void printAllC(researcherRoot_t *researchers);
 
-// Print all events and periodics unclassified
-void printUnclassified(researcherRoot_t *researchers);
+// Imprime os ND/ nao classificados pela qualis
+void printUnqualis(researcherRoot_t *researchers);
 
-// Print all coauthors of each researcher
+// Imprime os co-autores
 void printCoauthors(researcherRoot_t *researchers);
 
+// Imprime todos os periodicos da qualis do aglomerado
+void printPeriodsByQualisClusters(clusters_t *clusters);
 
+// Imprime todos os conferencias da qualis do aglomerado
+void printConfsByQualisClusters(clusters_t *clusters);
 
+// Imprime a quantidade periodicos e conferencias de cada pesquisador por aglomerado
+void printByAuthorClusters(clusters_t *clusters);
 
-// ======================= GROUP PRINTING ======================= 
+// Imprime a quantidade periodicos e conferencias de cada pesquisador por ano
+void printByYearClusters(clusters_t *clusters, int yearDelimiter);
 
-// Print all periodics discriminated by qualisLevel of each group
-void printPeriodicsByClassificationGroups(groups_t *groups);
+// Imprime todos os qualis C do aglomerado
+void printAllCClusters(clusters_t *clusters);
 
-// Print all events discriminated by qualisLevel of each group
-void printEventsByClassificationGroups(groups_t *groups);
+// Imprime os ND/ nao classificados pela qualis do aglomerado
+void printUnqualisclusters(clusters_t *clusters);
 
-// Print the quantity of periodics and events of each researcher by group 
-void printByAuthorGroups(groups_t *groups);
-
-// Print the quantity of periodics and events of each year by groups
-void printByYearGroups(groups_t *groups, int yearDelimiter);
-
-// Print all events and periodics with C qualisLevel
-void printAllCGroups(groups_t *groups);
-
-// Print all events and periodics unclassified by group
-void printUnclassifiedGroups(groups_t *groups);
-
-// Print all coauthors of each researcher by group
-void printCoauthorsGroup(groups_t *groups);
+// Imprime os co-autores do aglomeros
+void printCoauthorsCluster(clusters_t *clusters);
 
 #endif

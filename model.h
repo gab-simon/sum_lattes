@@ -1,7 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-
 typedef struct authorNode {
     char *name;
     struct authorNode *next;
@@ -65,50 +64,65 @@ typedef struct researcherRoot {
     researcherNode_t *tail;
 } researcherRoot_t;
 
-typedef struct groups {
-    researcherRoot_t *group1;
-    researcherRoot_t *group2;
-    char *group1_name;
-    char *group2_name;
-} groups_t;
+typedef struct clusters {
+    researcherRoot_t *cluster1;
+    researcherRoot_t *cluster2;
+    char *cluster1_name;
+    char *cluster2_name;
+} clusters_t;
 
-// Cria uma lista de periodos
-periodicsRoot_t *createPeriodicsList();
+// Cria uma lista de periodicos
+periodicsRoot_t *createPeriodsList();
 
-// Cria um novo periodo
+// Adiciona um novo periodicos
 periodicsNode_t *createPeriodic(researcherRoot_t *researchers, char *title, int year, char *qualisLevel);
+
+// Cria uma nova lista conferencia
+conferencesRoot_t * createConfsList();
+
+// Adiciona uma nova conferencia
+conferenceNode_t *createConference(researcherRoot_t *researchers, char *conference, int year, char *qualisLevel);
 
 // Cria uma lista de pesquisadores
 researcherRoot_t *createResearchersList();
 
-// Cria um novo pesquisador
+// Adiciona um novo pesquisador
 researcherNode_t *createResearcher(researcherRoot_t *researchers, char *name);
-
-// Cria uma nova lista conferencia
-conferencesRoot_t * createConferencesList();
-
-// Cria uma nova conferencia
-conferenceNode_t *createConference(researcherRoot_t *researchers, char *conference, int year, char *qualisLevel);
 
 // Cria uma nova lista de autores
 authorsRoot_t *createAuthorsList();
 
-// Cria um novo autor
+// Adiciona um novo autor
 authorNode_t *createAuthor(researcherNode_t *researcher, char *name);
 
-// Return a pointer to a groups structure
-groups_t *createGroups();
+// Inicializa um aglomerado de pesquisadores
+clusters_t *createClusters();
 
-// Add a new group in groups
-void addGroup(groups_t *groups, researcherRoot_t *researchers, char *groupName);
+// Adiciona um novo aglomerado de pesuiqsadores
+void addCluster(clusters_t *clusters, researcherRoot_t *researchers, char *clusterName);
 
-// Update the qualisLevel informations of an conference
+// Atualiza a lista de quantidade de qualis da conferencia
 void updateEventClassification(researcherRoot_t *researchers, conferenceNode_t *conference, char *qualisLevel);
 
-// Update the qualisLevel informations of a periodic
+// Atualiza a lista de quantidade de qualis do periodico
 void updatePeriodicClassification(researcherRoot_t *researchers, periodicsNode_t *periodic, char *qualisLevel);
 
+// Converção de string qualis para um inteiro
+int getClassificationInt(char *string);
+
+// Limpa a memoria alocada das conferencias
+void destroyConfs(conferencesRoot_t *root);
+
+// Limpa a memoria da lista de co-autores
+void destroyAuthors(authorsRoot_t *authors);
+
+// Limpa a memoria alocada dos periodicos
+void destroyPeriods(periodicsRoot_t *root);
+
+// Limpa a memoria da lista de pesquisadores
+void destroyResearchers(researcherRoot_t *root);
+
 // Limpa toda memoria alocada
-void destroyAllStructs(researcherRoot_t *root, groups_t *groups);
+void destroyAllStructs(researcherRoot_t *root, clusters_t *clusters);
 
 #endif
